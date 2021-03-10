@@ -1,4 +1,4 @@
-sudo: required 
+sudo: no 
 dist: bionic 
 language: generic
 branches:

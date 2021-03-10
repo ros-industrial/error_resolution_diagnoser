@@ -47,6 +47,7 @@ before_script:
   - sudo apt-get install python3-pip
   - sudo apt-get install python3-setuptools
   - sudo apt-get install apt-utils libcpprest-dev
+  - sudo apt-get install ros-$ROS_DISTRO-ros-environment
   - sudo apt install gcovr
   - pip3 install sanic
   - pip3 install databases

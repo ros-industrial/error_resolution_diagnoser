@@ -32,7 +32,7 @@ env:
       DOCKER_RUN_OPTS="--net=host -e ECS_API=http://127.0.0.1:8000 -e AGENT_POST_API=https://postman-echo.com"
       #AFTER_SCRIPT="./.coverage.sh"
 allow_failures:
-    - env: ROS_DISTRO="melodic" ROS_REPO=main  ADDITIONAL_DEBS="apt-utils libcpprest-dev ros-melodic-ros-environment"
+    - env: ROS_DISTRO="melodic" ROS_REPO=main  ADDITIONAL_DEBS="apt-utils libcpprest-dev ros-melodic-roslib"
 before_install:
   #installing microsoft libcpprest dependency
   - sudo apt-get install libcpprest-dev

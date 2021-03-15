@@ -1,6 +1,6 @@
 # error_resolution_diagnoser Documentation 
 
-[![Build Status](https://jenkins.cognicept.systems/buildStatus/icon?job=cognicept-agent-pipeline)](https://jenkins.cognicept.systems/job/cognicept-agent-pipeline/)  [![Coverage Status](http://34.87.159.179:5000/coverage/cognicept-agent-pipeline)](http://34.87.159.179:5000/coverage/cognicept-agent-pipeline)
+[![Build Status](https://travis-ci.org/cognicept-admin/error_resolution_diagnoser.svg?branch=master)](https://travis-ci.org/cognicept-admin/error_resolution_diagnoser)[![Coverage Status](http://34.87.159.179:5000/coverage/cognicept-agent-pipeline)](http://34.87.159.179:5000/coverage/cognicept-agent-pipeline)
 [![license - bsd 3 clause](https://img.shields.io/:license-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![support level: vendor](https://img.shields.io/badge/support%20level-vendor-brightgreen.svg)](https://cognicept.systems)
 

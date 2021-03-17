@@ -10,8 +10,7 @@ echo $ECS_API
 
 
 pip3 install -r error_classification_server/requirements.txt
-python3 error_classification_server/src/ecs_endpoint.py &
-APP_PID=$!
+python3 error_classification_server/src/ecs_endpoint.py & APP_PID=$!
 
 
 # cd rosrect-ecs-api-server

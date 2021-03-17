@@ -71,6 +71,6 @@ script:
 
 
 after_success:
-  - bash <(curl -s https://raw.githubusercontent.com/rarrais/ros_coverage/master/ros_coverage.sh)
+#  - bash <(curl -s https://raw.githubusercontent.com/rarrais/ros_coverage/master/ros_coverage.sh)
 #   - coveralls --exclude lib --exclude tests --gcov-options '\-lp'
 

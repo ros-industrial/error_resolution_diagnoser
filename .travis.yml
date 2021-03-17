@@ -50,8 +50,8 @@ before_script:
   - sudo apt-get install apt-utils libcpprest-dev
   - sudo apt install gcovr
   - pip3 install wheel
-  - pip3 install sanic
-  - pip3 install databases==0.4.1
+  - pip3 install sanic==19.12.2
+  - pip3 install databases==0.2.6
   - pip3 install aiosqlite
   - export ECS_API=http://127.0.0.1:8000
   - export AGENT_POST_API=https://postman-echo.com

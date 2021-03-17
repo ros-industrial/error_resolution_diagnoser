@@ -49,6 +49,7 @@ before_script:
   - sudo apt-get install python3-setuptools
   - sudo apt-get install apt-utils libcpprest-dev
   - sudo apt install gcovr
+  - pip3 install wheel
   - pip3 install sanic
   - pip3 install databases
   - pip3 install aiosqlite

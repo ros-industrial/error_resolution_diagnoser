@@ -5,6 +5,7 @@
 #Troubleshooting
 export ECS_API=http://0.0.0.0:8000
 export AGENT_POST_API=https://postman-echo.com
+export ECS_DB_LOC=error_classification_server/ecs.db
 echo "Checking ECS API Val"
 echo $ECS_API
 

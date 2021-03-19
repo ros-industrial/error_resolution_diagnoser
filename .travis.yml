@@ -13,6 +13,9 @@ compiler:
   - gcc
 notifications:
   email:
+    recipients:
+      - swarooph@cognicept.systems
+      - alok@cognicept.systems
     on_failure: always
 
 env:

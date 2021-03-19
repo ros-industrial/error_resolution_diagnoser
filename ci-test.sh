@@ -11,8 +11,8 @@ echo $ECS_API
 
 
 pip3 install uvloop==0.14.0
-#pip3 install sanic 
-#pip3 install -r error_classification_server/requirements.txt
+pip3 install sanic 
+pip3 install -r error_classification_server/requirements.txt
 python3 error_classification_server/src/ecs_endpoint.py & APP_PID=$!
 
 

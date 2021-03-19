@@ -20,7 +20,7 @@ notifications:
 
 env:
   global:
-   - ROS_REPO=main
+   - ROS_REPO=ros
    - NOT_TEST_INSTALL=true
    - CCACHE_DIR=$HOME/.ccache  
    - ECS_API=http://127.0.0.1:8000
@@ -30,13 +30,13 @@ env:
   matrix:
     - USE_DEB=true  
       ROS_DISTRO="melodic"
-      ROS_REPO=main
+      ROS_REPO=ros
       ADDITIONAL_DEBS="libcpprest-dev curl ros-melodic-roslib ros-melodic-rostest ros-melodic-diagnostics ros-melodic-navigation"
       CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
       DOCKER_RUN_OPTS="--net=host -e ECS_API=http://127.0.0.1:8000 -e AGENT_POST_API=https://postman-echo.com"
       #AFTER_SCRIPT="./.coverage.sh"
 allow_failures:
-    - env: ROS_DISTRO="melodic" ROS_REPO=main  ADDITIONAL_DEBS="apt-utils libcpprest-dev ros-melodic-roslib"
+    - env: ROS_DISTRO="melodic" ROS_REPO=ros  ADDITIONAL_DEBS="apt-utils libcpprest-dev ros-melodic-roslib"
 before_install:
   #installing microsoft libcpprest dependency
   - sudo apt-get install libcpprest-dev
@@ -52,11 +52,8 @@ before_script:
   - sudo apt-get install python3-setuptools
   - sudo apt-get install apt-utils libcpprest-dev
   - sudo apt install gcovr
-  - rm -rf ~/.cache/pip
-  - pip3 install wheel
-  - export SANIC_NO_UVLOOP=true
-  - pip3 install sanic==20.9.0
-  - pip3 install databases==0.2.6
+  - pip3 install sanic
+  - pip3 install databases
   - pip3 install aiosqlite
   - export ECS_API=http://127.0.0.1:8000
   - export AGENT_POST_API=https://postman-echo.com
@@ -64,7 +61,7 @@ before_script:
   - chmod +x ci-test.sh
   #- chmod +x .coverage.sh
   - ./ci-test.sh
-  - sleep 30
+  - sleep 10
 
 script:
   - curl 'http://127.0.0.1:8000/ping'

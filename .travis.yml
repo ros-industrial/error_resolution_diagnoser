@@ -54,6 +54,7 @@ before_script:
   - sudo apt install gcovr
   - rm -rf ~/.cache/pip
   - pip3 install wheel
+  - export SANIC_NO_UVLOOP=true
   - pip3 install sanic==19.12.2
   - pip3 install databases==0.2.6
   - pip3 install aiosqlite

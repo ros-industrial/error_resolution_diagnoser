@@ -1,5 +1,7 @@
 sudo: required 
-dist: bionic 
+dist: bionic
+python:
+  - "3.6" 
 language: generic
 branches:
   only:
@@ -48,9 +50,6 @@ before_script:
   - sudo apt-get install python3-setuptools
   - sudo apt-get install apt-utils libcpprest-dev
   - sudo apt install gcovr
-  - pip3 install sanic
-  - pip3 install databases
-  - pip3 install aiosqlite
   - export ECS_API=http://127.0.0.1:8000
   - export AGENT_POST_API=https://postman-echo.com
   - chmod +x ci-test.sh

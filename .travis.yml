@@ -15,7 +15,7 @@ notifications:
   email:
     recipients:
       - swarooph@cognicept.systems
-      - alok@cognicept.systems
+      - jaseel@cognicept.systems
     on_failure: always
 
 env:

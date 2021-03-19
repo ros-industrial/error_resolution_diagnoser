@@ -26,6 +26,7 @@ env:
    - AGENT_POST_API=https://postman-echo.com
    - ECS_DB_LOC=error_classification_server/ecs.db
   matrix:
+    - python:3.7
     - USE_DEB=true  
       ROS_DISTRO="melodic" 
       ROS_REPO=ros

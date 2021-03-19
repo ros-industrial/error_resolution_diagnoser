@@ -40,7 +40,7 @@ before_install:
 
 install:
   - git clone https://github.com/cognicept-admin/error_classification_server.git  
-  - git clone https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
+  - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 
 before_script:
   - sudo apt-get update
@@ -53,15 +53,15 @@ before_script:
   - pip3 install aiosqlite
   - export ECS_API=http://127.0.0.1:8000
   - export AGENT_POST_API=https://postman-echo.com
-  - export ECS_DB_LOC=error_classification_server/ecs.db
   - chmod +x ci-test.sh
   #- chmod +x .coverage.sh
   - ./ci-test.sh
+  - export ECS_DB_LOC=error_classification_server/ecs.db
   - sleep 10
 
 script:
   - curl 'http://127.0.0.1:8000/ping'
-  - source .industrial_ci/travis.sh
+  - .industrial_ci/travis.sh
   #- ./.coverage.sh
 #  - gcovr -r . --exclude-directories test
   - curl 'http://127.0.0.1:8000/ert/error-data/'

@@ -278,7 +278,7 @@ pplx::task<void> BackendApi::post_event_log(json::value payload)
            // Create HTTP client configuration
            http_client_config config;
            config.set_validate_certificates(false);
-           auto timeout = std::chrono::milliseconds(500);
+           auto timeout = std::chrono::milliseconds(2000);
            config.set_timeout(timeout);
 
            // Create HTTP client

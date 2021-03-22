@@ -186,6 +186,30 @@ TEST(BackEndApiTestSuite, statusFalseTest)
   infile.close();
 }
 
+TEST(BackEndApiTestSuite, postTest)
+{
+  // Set mode to POST
+  char agent_mode[50] = "AGENT_MODE=POST_TEST";
+  char post_api[200] = "AGENT_POST_API=https://postman-echo.com";
+  putenv(agent_mode);
+  putenv(post_api);
+
+  // Create new BackendApi instance
+  BackendApi post_api_instance;
+
+  // Push event
+  post_api_instance.push_event_log(sample_log);
+
+  // Get log file
+  int log_id = 1;
+  std::string filename = log_name + std::to_string(log_id) + log_ext;
+
+  // Check if file exists
+  std::ifstream infile(filename);
+  bool fileflag = infile.good();
+  ASSERT_TRUE(fileflag);
+}
+
 int main(int argc, char **argv)
 {
 

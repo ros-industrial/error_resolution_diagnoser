@@ -25,6 +25,8 @@ env:
    - ECS_API=http://127.0.0.1:8000
    - AGENT_POST_API=https://postman-echo.com
    - ECS_DB_LOC=error_classification_server/ecs.db
+   - CODE_COVERAGE="codecov.io"
+   - CODECOV_TOKEN="267941d9-5505-4ad8-a79a-c45af9047968"
   matrix:
     - USE_DEB=true  
       ROS_DISTRO="melodic" 

@@ -45,7 +45,7 @@ before_install:
 install:
   - git clone https://github.com/cognicept-admin/error_classification_server.git  
   #- git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
-  - git clone --quiet --depth 1 https://github.com/Briancbn/industrial_ci.git /industrial_ci -b pr-coverage
+  - git clone --quiet --depth 1 https://github.com/Briancbn/industrial_ci.git .industrial_ci -b pr-coverage
 
 before_script:
   - sudo apt-get update

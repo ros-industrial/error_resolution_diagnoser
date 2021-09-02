@@ -1,6 +1,6 @@
 # error_resolution_diagnoser Documentation 
 
-[![Build Status](https://jenkins.cognicept.systems/buildStatus/icon?job=cognicept-agent-pipeline)](https://jenkins.cognicept.systems/job/cognicept-agent-pipeline/)  [![Coverage Status](http://34.87.159.179:5000/coverage/cognicept-agent-pipeline)](http://34.87.159.179:5000/coverage/cognicept-agent-pipeline)
+[![Build Status](https://travis-ci.org/cognicept-admin/error_resolution_diagnoser.svg?branch=master)](https://travis-ci.org/cognicept-admin/error_resolution_diagnoser)[![Coverage Status](https://coveralls.io/repos/github/cognicept-admin/error_resolution_diagnoser/badge.svg?branch=master)](https://coveralls.io/github/cognicept-admin/error_resolution_diagnoser?branch=master)
 [![license - bsd 3 clause](https://img.shields.io/:license-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![support level: vendor](https://img.shields.io/badge/support%20level-vendor-brightgreen.svg)](https://cognicept.systems)
 
@@ -25,6 +25,9 @@ This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDU
     * [Start Simulation](#start-simulation)
     * [Start error_resolution_diagnoser](#start-error_resolution_diagnoser)
     * [Generate a navigation error](#generate-a-navigation-error)
+    * [Generate diagnostic logs](#generate-diagnostic-logs)
+        * [Log parsing](#log-parsing)
+        * [Log publishing](#log-publishing)
 - [Related-Pages](#related-pages)
 
 ## Description
@@ -72,7 +75,7 @@ You can use this approach if you are planning on running this on a system that h
         $ rospack list | grep error_resolution_diagnoser
         error_resolution_diagnoser /home/swaroophs/catkin_ws/src/error_resolution_diagnoser
 
-5. Additionally, follow the appropriate installation steps for installing the `ECS API Server` [here][8].
+5. Additionally, follow the appropriate installation steps for installing the `error_classification_server` [here][8].
     
 That is it for the native installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
 
@@ -86,14 +89,14 @@ You can use this approach if you are planning on running the agent on a system t
 
         $ docker build -t error_resolution_diagnoser .
 
-3. Additionally, follow the appropriate installation steps for installing the `ECS API Server` [here][8].
+3. Additionally, follow the appropriate installation steps for installing the `error_classification_server` [here][8].
     
 That is it for the Docker installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
 
 ## Running tests
 Optionally, you can run the unit and integration tests natively or using Docker, based on the installation method you chose in the previous section. 
 
-**NOTE: Before running tests, makes sure the `ECS API Server` is running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in some failed tests that require connection to ECS.**
+**NOTE: Before running tests, makes sure the `error_classification_server` is running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in some failed tests that require connection to ECS.**
 
 ### Native
 
@@ -251,22 +254,57 @@ Optionally, you can run the unit and integration tests natively or using Docker,
     * TESTS: 5
     * ERRORS: 0
     * FAILURES: 0
+    .
+    .
+    .
+    .
+    [Testcase: testlisteneragent_test_node_telemetry] ... ok
+
+    [ROSTEST]-----------------------------------------------------------------------
+
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_telemetry/telemetryTest][passed]
+
+    SUMMARY
+    * RESULT: SUCCESS
+    * TESTS: 1
+    * ERRORS: 0
+    * FAILURES: 0
+    .
+    .
+    .
+    .
+    [Testcase: testlisteneragent_test_node_diagnostics] ... ok
+
+    [ROSTEST]-----------------------------------------------------------------------
+
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_diagnostics/diagnosticsNoStateChangeTest][passed]
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_diagnostics/diagnosticsStateChangeTest][passed]
+
+    SUMMARY
+    * RESULT: SUCCESS
+    * TESTS: 2
+    * ERRORS: 0
+    * FAILURES: 0
+
 
 ## Syntax
 The agent can be configured using the following environment variables:
 
-| Variable          | Type                       |    Default     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-|-------------------|:---------------------------|:--------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `ROBOT_CODE`      | Any String                 | `"Undefined"`  | A unique code that identifies the robot the agent is listening to. Usually a UUID but any string will work.                                                                                                                                                                                                                                                                                                                                                                                              |
-| `SITE_CODE`       | Any String                 | `"Undefined"`  | A unique code that identifies the site of the robot being listened to. Usually a UUID but any string will work.                                                                                                                                                                                                                                                                                                                                                                                          |
-| `AGENT_ID`        | Any String                 | `"Undefined"`  | A unique code that identifies the agent itself. Usually a UUID but any string will work.                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `AGENT_MODE`      | `JSON_TEST` or `POST_TEST` |  `JSON_TEST`   | When set to value `JSON_TEST`, will save JSON logs locally on the file system under the `$HOME/.cognicept/agent/logs/< run_id >` folder. Where `< run_id >` is uniquely created every time the agent is launched.                                                                                                       When set to value `POST_TEST`, in addition to saving logs like the `JSON_TEST` mode, will also push the JSON to a REST API endpoint configured by the `AGENT_POST_API` variable. |
-| `AGENT_POST_API`  | REST API Endpoint String   | Not applicable | If the `AGENT_MODE` is set to `POST_TEST`, this variable MUST be configured to a valid REST API endpoint. If not specified, the agent will default back to `JSON_TEST` mode. If API endpoint is not available to connect, agent will error out.                                                                                                                                                                                                                                                          |
-| `AGENT_TYPE`      | `ROS` or `DB`              |     `ROS`      | When set to `ROS`, the agent catches ANY ROS log that is published to /rosout. When set to `DB`, logs that are only available as part of the *Error Classification System (ECS)* will be considered for reporting, to enable log suppression for particular robots/sites. The ECS should be available for communicating at the REST API endpoint configured by the `ECS_API` variable.                                                                                                                   |
-| `ECS_API`         | REST API Endpoint String   | Not applicable | If the `AGENT_TYPE` is set to `DB`, this variable MUST be configured to a valid REST API endpoint. If not specified, the agent will default back to `ROS` mode. If API endpoint is not available to connect, agent will error out.                                                                                                                                                                                                                                                                       |
-| `ECS_ROBOT_MODEL` | Valid Robot Model          | Not applicable | If the `AGENT_TYPE` is set to `DB`, this variable MUST be configured to a valid robot model. If not specified, the agent will default back to `ROS` mode. For ROS 1 navigation stack, just use `Turtlebot3`.                                                                                                                                                                                                                                                                                             |
+| Variable           | Type                                                                                                    |    Default     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+|--------------------|:--------------------------------------------------------------------------------------------------------|:--------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ROBOT_CODE`       | Any String                                                                                              | `"Undefined"`  | A unique code that identifies the robot the agent is listening to. Usually a UUID but any string will work.                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `SITE_CODE`        | Any String                                                                                              | `"Undefined"`  | A unique code that identifies the site of the robot being listened to. Usually a UUID but any string will work.                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `AGENT_ID`         | Any String                                                                                              | `"Undefined"`  | A unique code that identifies the agent itself. Usually a UUID but any string will work.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `AGENT_MODE`       | `JSON_TEST` or `POST_TEST`                                                                              |  `JSON_TEST`   | When set to value `JSON_TEST`, will save JSON logs locally on the file system under the `$HOME/.cognicept/agent/logs/< run_id >` folder. Where `< run_id >` is uniquely created every time the agent is launched.                                                                                                       When set to value `POST_TEST`, in addition to saving logs like the `JSON_TEST` mode, will also push the JSON to a REST API endpoint configured by the `AGENT_POST_API` variable.                                                                             |
+| `AGENT_POST_API`   | REST API Endpoint String                                                                                | Not applicable | If the `AGENT_MODE` is set to `POST_TEST`, this variable MUST be configured to a valid REST API endpoint. If not specified, the agent will default back to `JSON_TEST` mode. If API endpoint is not available to connect, agent will error out.                                                                                                                                                                                                                                                                                                                                      |
+| `AGENT_TYPE`       | `ROS` or `DB`                                                                                           |     `ROS`      | When set to `ROS`, the agent catches ANY ROS log that is published to /rosout. When set to `DB`, logs that are only available as part of the *Error Classification System (ECS)* will be considered for reporting, to enable log suppression for particular robots/sites. The ECS should be available for communicating at the REST API endpoint configured by the `ECS_API` variable.                                                                                                                                                                                               |
+| `ECS_API`          | REST API Endpoint String                                                                                | Not applicable | If the `AGENT_TYPE` is set to `DB`, this variable MUST be configured to a valid REST API endpoint. If not specified, the agent will default back to `ROS` mode. If API endpoint is not available to connect, agent will error out.                                                                                                                                                                                                                                                                                                                                                   |
+| `ECS_ROBOT_MODEL`  | Valid Robot Model                                                                                       | Not applicable | If the `AGENT_TYPE` is set to `DB`, this variable MUST be configured to a valid robot model. If not specified, the agent will default back to `ROS` mode. For ROS 1 navigation stack, just use `Turtlebot3`.                                                                                                                                                                                                                                                                                                                                                                         |
+| `LOG_NODE_LIST`    | Semicolon separated list of ROS nodes to filter and listen to (precede node names with `/`)             | Not applicable | This is an optional parameter that can be used to specify a 'semi-colon' separated list of ROS node names for which alone the ROS logs will be filtered by. Use this parameter to selectively choose only nodes of choice to remove noise from the ROS logs. Especially if you do not have control over the ROS logs of some of the other nodes. When not specified, all ROS node logs will be processed. When both `LOG_NODE_LIST` and `LOG_NODE_EX_LIST` are specified, `LOG_NODE_LIST` takes precedence and `LOG_NODE_EX_LIST` is ignored.                                        |
+| `LOG_NODE_EX_LIST` | Semicolon separated list of ROS node logs to filter OUT and NOT listen to (precede node names with `/`) | Not applicable | This is an optional parameter that can be used to specify a 'semi-colon' separated list of ROS node names for which the ROS logs will be filtered OUT and not listened to. Use this parameter to selectively exclude only nodes of choice to remove nodes that emit noisy and unnecessary ROS logs. Especially if you do not have control over the ROS logs of some of the other nodes. When not specified, all ROS node logs will be processed. When both `LOG_NODE_LIST` and `LOG_NODE_EX_LIST` are specified, `LOG_NODE_LIST` takes precedence and `LOG_NODE_EX_LIST` is ignored. |
+| `DIAGNOSTICS`      | ON/OFF                                                                                                  |      OFF       | This will let the diagnoser listen to diagnostic information on the ROS node. By setting this to ON, the diagnoser will subscribe to `/diagnostics_agg` topic and report 'state-changes'. For more information, refer to the section [Generate diagnostic logs](#generate-diagnostic-logs).                                                                                                                                                                                                                                                                                          |
 
-**NOTE: To run the agent in the `DB` mode, `ECS API Server` should be running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in the agent not able to find a valid API endpoint and result in an error thrown.**
+**NOTE: To run the agent in the `DB` mode, `error_classification_server` should be running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in the agent not able to find a valid API endpoint and result in an error thrown.**
 
 Based on the type of installation, you can configure these variables by different methods as follows.
 
@@ -286,7 +324,7 @@ Now, you can run the listener agent using the provided launch file and `roslaunc
 
     $ roslaunch error_resolution_diagnoser error_resolution_diagnoser.launch 
 
-**NOTE: Just launching the ROS node will start a new ROS master if one is not found. If you would like to connect to a ROS network that is not localhost and has a different `ROS_IP` and `ROS_URI`. Specify these as environment variables as well.**
+**NOTE: Just launching the ROS node will start a new ROS master if one is not found. If you would like to connect to a ROS network that is not localhost and has a different `ROS_IP` and `ROS_MASTER_URI`, specify these as environment variables as well. And use the `rosrun error_resolution_diagnoser error_resolution_diagnoser` run command instead.**
 
 ### Configure and Run for Docker
 In case of a Docker installation, you can simply use the [`runtime.env`](runtime.env) file in this repository as an example template and pass it to the docker container with the `--env-file` argument when using the `docker run` command. Simply edit the `runtime.env` like a text file, or comment the unnecessary variables and then rerun the container. Example below:
@@ -299,7 +337,7 @@ In case of a Docker installation, you can simply use the [`runtime.env`](runtime
     error_resolution_diagnoser:latest  \
     roslaunch error_resolution_diagnoser error_resolution_diagnoser.launch 
 
-**NOTE: Just launching the ROS node will start a new ROS master if one is not found. If you would like to connect to a ROS network that is not localhost and has a different `ROS_IP` and `ROS_URI`. Specify these as environment variables as well.**
+**NOTE: Just launching the ROS node will start a new ROS master if one is not found. If you would like to connect to a ROS network that is not localhost and has a different `ROS_IP` and `ROS_MASTER_URI`, specify these as environment variables as well. And use the `rosrun error_resolution_diagnoser error_resolution_diagnoser` run command instead.**
 
 ## Example Application
 
@@ -348,64 +386,67 @@ Run the following `docker run` command:
 
  Apart from a few small differences, the agent prompts would look similar for both the types of launches. Sample is shown below:
 
-    ... logging to /home/swaroophs/.ros/log/243d32d2-c01f-11ea-8f97-9cb6d09cab4f/roslaunch-swarooph-xps-18828.log
+    ... logging to /home/swaroophs/.ros/log/1d7d48ce-3603-11eb-9e94-9cb6d09cab4f/roslaunch-swarooph-xps-9963.log
     Checking log directory for disk usage. This may take a while.
     Press Ctrl-C to interrupt
     Done checking log file disk usage. Usage is <1GB.
 
-    started roslaunch server http://swarooph-xps:46059/
+    started roslaunch server http://swarooph-xps:43263/
 
     SUMMARY
     ========
 
     PARAMETERS
     * /rosdistro: melodic
-    * /rosversion: 1.14.6
+    * /rosversion: 1.14.10
 
     NODES
     /
         error_resolution_diagnoser (error_resolution_diagnoser/error_resolution_diagnoser)
 
+    auto-starting new master
+    process[master]: started with pid [9973]
     ROS_MASTER_URI=http://localhost:11311
 
-    process[error_resolution_diagnoser-1]: started with pid [18843]
+    setting /run_id to 1d7d48ce-3603-11eb-9e94-9cb6d09cab4f
+    process[rosout-1]: started with pid [9984]
+    started core service [/rosout]
+    process[error_resolution_diagnoser-2]: started with pid [9987]
     =======================Environment variables setup======================
-    Environment variable AGENT_TYPE unspecified. Defaulting to ROS mode...
-    Environment variable ROBOT_CODE unspecified. Defaulting to 'Undefined'...
-    Environment variable SITE_CODE unspecified. Defaulting to 'Undefined'...
-    Environment variable AGENT_ID unspecified. Defaulting to 'Undefined'...
-    Environment variable AGENT_MODE unspecified. Defaulting to 'JSON_TEST'...
-    =========================================================================
+    AGENT_TYPE unspecified. Defaulting to ROS mode...
+    ROBOT_CODE unspecified. Defaulting to 'Undefined'...
+    SITE_CODE unspecified. Defaulting to 'Undefined'...
+    AGENT_ID unspecified. Defaulting to 'Undefined'...
+    AGENT_MODE unspecified. Defaulting to 'JSON_TEST'...
+    LOG_NODE_LIST and LOG_NODE_EX_LIST unspecified. Defaulting to ALL nodes.
+    DIAGNOSTICS is unspecified. Defaulting to OFF.
+    ================================Other Info==============================
     ROS session detected
-    Agent log directory already exists: /$HOME/.cognicept/agent/logs/243d32d2-c01f-11ea-8f97-9cb6d09cab4f
+    Agent log directory created: /$HOME/.cognicept/agent/logs/1d7d48ce-3603-11eb-9e94-9cb6d09cab4f
     Updated latest log location in: /$HOME/.cognicept/agent/logs/latest_log_loc.txt
-    TEST mode is ON. JSON Logs will be saved here: /$HOME/.cognicept/agent/logs/243d32d2-c01f-11ea-8f97-9cb6d09cab4f
-    Subscribed to Listener Agent with direct rosout...
+    TEST mode is ON. JSON Logs will be saved here: /$HOME/.cognicept/agent/logs/1d7d48ce-3603-11eb-9e94-9cb6d09cab4f
+    ===========================Diagnosing Started===========================
     Status Logged: Online
-    Pose topic found! Subscribing to /amcl_pose for telemetry.
-    Odom topic found! Subscribing to /odom for telemetry.
-    Status Logged: Online
+    AGENT:: STATUS:: OK
     Status Logged: Online
     Status Logged: Online
     Status Logged: Online
 
-Let's unpack what we see on the prompts here. First, we see the `Environment variables setup` section. Here, you can confirm the values of all the environment variables. It will also show if the agent is expecting a particular variable but it was not defined so a default value has been chosen. In our case, none of these variables have been explicitly defined, so the default values are used.
+Let's unpack what we see on the prompts here. First, we see the `Environment variables setup` section. Here, you can confirm the values of all the environment variables. It will also show if the agent is expecting a particular variable but it was not defined so a default value has been chosen. In our case, none of these variables have been explicitly defined, so the default values are used. If you are following along the documentation, you will see the environment variables as described in the [Configure and Run for native installations](#configure-and-run-for-native-installations) section or [Configure and Run for Docker](#configure-and-run-for-docker) section.
 
-Next, we see the following part:
+Next, we see the `Other Info` section:
 
+    ================================Other Info==============================
     ROS session detected
-    Agent log directory already exists: /$HOME/.cognicept/agent/logs/243d32d2-c01f-11ea-8f97-9cb6d09cab4f
+    Agent log directory created: /$HOME/.cognicept/agent/logs/1d7d48ce-3603-11eb-9e94-9cb6d09cab4f
     Updated latest log location in: /$HOME/.cognicept/agent/logs/latest_log_loc.txt
-    TEST mode is ON. JSON Logs will be saved here: /$HOME/.cognicept/agent/logs/243d32d2-c01f-11ea-8f97-9cb6d09cab4f
-    Subscribed to Listener Agent with direct rosout...
+    TEST mode is ON. JSON Logs will be saved here: /$HOME/.cognicept/agent/logs/1d7d48ce-3603-11eb-9e94-9cb6d09cab4f
 
 If a ROS session is detected, the agent will query the `run_id` ROS parameter and then use it to create a folder under `$HOME/.cognicept/agent/logs/run_id` if one does not exist already. This will be where all the logs during a particular session will be stored. This location is also by default stored in a text file `$HOME/.cognicept/agent/logs/latest_log_loc.txt` so that non-ROS based systems can have easy access to the current logs. 
 
 Next, we see the following:
 
     Status Logged: Online
-    Pose topic found! Subscribing to /amcl_pose for telemetry.
-    Odom topic found! Subscribing to /odom for telemetry.
 
 The agent not only reports ROS logs such as ERROR, WARN and INFO but also generates *heartbeat* or *status* logs periodically which can be used to ascertain if an agent is "Online" or "Offline". This periodic status is updated every **15 seconds** (not tunable). The physical location of the log can be found at `$HOME/.cognicept/agent/logs/run_id/logDataStatus.json`. For e.g. a sample heartbeat log for Online status is shown below. The `telemetry` field has information from `/amcl_pose` and `/odom` topics if those topics are available. Note also that the timestamp is in `UTC`:
 
@@ -606,11 +647,46 @@ These JSON logs can be consumed by REST APIs/data streams to connect to incident
 
 From the echo, you are able to see that the response has the same contents as the JSON logs generated. Configure this endpoint appropriately to directly connect the agent to other systems such as incident management. Now, operators can monitor this incident management system to intervene robot operations to correct the errors to reduce downtime on the actual field.
 
+### Generate diagnostic logs
+The `error_resolution_diagnoser` supports logging `diagnostic_msgs/DiagnosticArray` type messages published to `/diagnostics_agg` topic in addition to the `rosgraph_msgs/Log` messages published to `/rosout_agg` topic. The support for diagnostics is slightly different from that of ROS logs. 
+
+#### **Log parsing**
+The diagnostic messages that come in are not directly processed by the diagnoser. It is first parsed into the following format. 
+
+```
+[(level)] (diagnostic_identifier)-->(diagnostic_message>)
+```
+
+This is because, every diagnostic message has a `level` that is published as shown [here][10]. The diagnoser includes this information in the `[(level)]` part of the log in a string form of `[ERROR]`, `[WARN]` or `[INFO]`. Optionally, the nodes also publish a `msg`. This information is included in the `(diagnostic_message)` part of the log. However this is not a requirement. A node might just publish the `level` noting the diagnostic status and not publish anything in the `msg`. Additionally, based on the type of node publishing, it also has identifiers such as `name` and `hardware_id`. The `(diagnostic_identifier)` part of the log is set to `name`, if it is available, otherwise `hardware_id` is used if that is available else set to an empty string if none is available.
+
+#### **Log publishing**
+The diagnoser then publishes the log by checking for *state changes* of the log. To give an example, here are the logs for a RoboSense lidar topic at the `[INFO]` and `[WARN]` levels.
+
+```
+[INFO] /Other/rslidar_node: rslidar_packets topic status-->Desired frequency met.
+```
+
+```
+[WARN] /Other/rslidar_node: rslidar_packets topic status-->Frequency too low.
+```
+
+Since a majority of the diagnostic messages are published at a periodic interval, it is desirable to reduce the clutter by only publishing the state changes. i.e. publish logs only when log level for a node changes from `[INFO]` <--> `[WARN]` <--> `[ERROR]`. Another thing to note is, the error classification queries are done on the node names and levels rather than the messages which tend to be very dynamic. For example, the NVidia Jetson hardware has a ROS package called [`ros_jetson_stats`][11] that can help monitor the hardware diagnostics. One such diagnostic it publishes is the disk usage as follows.
+
+```
+[WARN] /jtop/board/disk-->23.1GB/27.4GB
+```
+
+```
+[ERROR] /jtop/board/disk-->26.1GB/27.4GB
+```
+
+The node publishes disk usage message as UsedGB/AvailGB no matter the status level. And this might change based on the size of the drive installed. This makes it very dynamic in terms of adding logs. So the design choice was to make the the logging mechanism diagnostic message independent.
+
 ## Related Pages
 For more related information, refer to:
 
-* [ECS API Installation][8]
-* [ECS API Syntax][9]
+* [error_classification_server Installation][8]
+* [error_classification_server Syntax][9]
 * [Virtual Navigation with Turtlebot3][1]
 * [Turtlebot3 installing packages][2]
 * [rosgraph_msgs documentation][3]
@@ -618,6 +694,8 @@ For more related information, refer to:
 * [Microsoft C++ REST SDK][5]
 * [Docker Installation][6]
 * [Intro Document][7]
+* [diagnostic_msgs documentation][10]
+* [ros_jetson_stats repository][11]
 
 [1]: http://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/#virtual-navigation-with-turtlebot3
 [2]: http://emanual.robotis.com/docs/en/platform/turtlebot3/pc_setup/#install-dependent-ros-packages
@@ -628,6 +706,8 @@ For more related information, refer to:
 [7]: docs/INTRO.md
 [8]: https://github.com/cognicept-admin/error_classification_server#installation
 [9]: https://github.com/cognicept-admin/error_classification_server#syntax
+[10]: http://docs.ros.org/en/api/diagnostic_msgs/html/msg/DiagnosticStatus.html
+[11]: https://github.com/rbonghi/ros_jetson_stats
 
 ## Acknowledgements
 We would like to acknowledge the Singapore government for their vision and support to start this ambitious research and development project, *"Accelerating Open Source Technologies for Cross Domain Adoption through the Robot Operating System"*. The project is supported by Singapore National Robotics Programme (NRP).

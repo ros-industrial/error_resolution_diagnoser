@@ -41,6 +41,7 @@ before_install:
   #installing microsoft libcpprest dependency
   - sudo apt-get install libcpprest-dev
   - pip install --user cpp-coveralls
+  - curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 
 install:
   - git clone https://github.com/cognicept-admin/error_classification_server.git  
